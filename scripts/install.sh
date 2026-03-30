@@ -144,22 +144,32 @@ setup_gateway() {
     mkdir -p "$GATEWAY_DIR"
 
     # Copy HiveControl OS files to gateway
-    if [ -d "$ROOT_DIR/screens" ]; then
+    if [ -d "$ROOT_DIR/hivecontrol/screens" ]; then
         log_info "Copying HiveControl screens..."
-        cp -r "$ROOT_DIR/screens"/* "$GATEWAY_DIR/" 2>/dev/null || true
+        mkdir -p "$GATEWAY_DIR/screens"
+        cp -r "$ROOT_DIR/hivecontrol/screens"/* "$GATEWAY_DIR/screens/" 2>/dev/null || true
         log_success "Screens copied"
     fi
 
-    if [ -f "$ROOT_DIR/index.html" ]; then
+    if [ -f "$ROOT_DIR/hivecontrol/index.html" ]; then
         log_info "Copying index.html..."
-        cp "$ROOT_DIR/index.html" "$GATEWAY_DIR/"
+        cp "$ROOT_DIR/hivecontrol/index.html" "$GATEWAY_DIR/"
         log_success "index.html copied"
     fi
 
-    if [ -f "$ROOT_DIR/ws-client.js" ]; then
+    if [ -f "$ROOT_DIR/hivecontrol/lib/ws-client.js" ]; then
         log_info "Copying ws-client.js..."
-        cp "$ROOT_DIR/ws-client.js" "$GATEWAY_DIR/"
+        mkdir -p "$GATEWAY_DIR/lib"
+        cp "$ROOT_DIR/hivecontrol/lib/ws-client.js" "$GATEWAY_DIR/lib/"
         log_success "ws-client.js copied"
+    fi
+
+    # Copy other lib files
+    if [ -d "$ROOT_DIR/hivecontrol/lib" ]; then
+        log_info "Copying lib directory..."
+        mkdir -p "$GATEWAY_DIR/lib"
+        cp -r "$ROOT_DIR/hivecontrol/lib"/* "$GATEWAY_DIR/lib/" 2>/dev/null || true
+        log_success "Lib files copied"
     fi
 
     if [ -d "$ROOT_DIR/branding" ]; then
