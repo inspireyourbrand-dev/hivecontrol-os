@@ -1344,6 +1344,32 @@
             div.textContent = text;
             return div.innerHTML;
         }
+
+        // ── Gateway Event Bridge (receives events from parent HiveControl shell) ──
+        window.addEventListener('message', (event) => {
+            try {
+                if (event.data && event.data.type === 'hiveEvent') {
+                    const { event: evt, payload } = event.data;
+                    handleGatewayEvent(evt, payload);
+                }
+            } catch (_) {}
+        });
+
+        function handleGatewayEvent(event, payload) {
+            switch (event) {
+                case 'heartbeat':
+                    // Update any live status indicators
+                    break;
+                case 'agent':
+                    // Agent status change
+                    break;
+                case 'health':
+                    // Gateway health update
+                    break;
+                default:
+                    break;
+            }
+        }
     </script>
 </body>
 </html>
