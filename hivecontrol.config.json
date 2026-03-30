@@ -1,0 +1,51 @@
+{
+  "$schema": "hivecontrol-os-config-v0.1",
+  "version": "0.1.0",
+  "product": "HiveControl OS",
+  "brand": "HivePowered.Ai",
+  "requires": {
+    "openclaw": ">=0.1.0",
+    "note": "HiveControl OS is an add-on for OpenClaw. Install OpenClaw first: https://openclaw.ai"
+  },
+  "hivecontrol": {
+    "enabled": true,
+    "servePath": "/__hiveclaw__/hivecontrol/",
+    "defaultTheme": "dark",
+    "screens": [
+      "dashboard",
+      "tasks",
+      "calendar",
+      "memory",
+      "projects",
+      "documents",
+      "team",
+      "office",
+      "workflow"
+    ]
+  },
+  "hiveworkflow": {
+    "enabled": true,
+    "servePath": "/__hiveclaw__/hivecontrol/screens/workflow.html"
+  },
+  "gateway": {
+    "wsPort": 18789,
+    "wsHost": "127.0.0.1",
+    "autoReconnect": true,
+    "reconnectInterval": 3000,
+    "maxReconnectAttempts": 50
+  },
+  "governor": {
+    "enabled": true,
+    "maxConcurrentExternalCalls": 1,
+    "minDelayBetweenCalls": 2000,
+    "backoff": {
+      "firstHit": 60000,
+      "secondHit": 900000,
+      "thirdHit": "offline"
+    }
+  },
+  "agents": {
+    "hierarchy": "agents/AGENTS.md",
+    "defaultOrchestrator": "orion"
+  }
+}
