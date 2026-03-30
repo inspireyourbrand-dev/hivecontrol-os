@@ -1,0 +1,45 @@
+{
+  "name": "hivecontrol-os",
+  "version": "0.1.0",
+  "description": "HiveControl OS â Multi-agent mission control dashboard and workflow builder for OpenClaw. Install into your existing OpenClaw gateway.",
+  "main": "index.js",
+  "scripts": {
+    "install": "bash scripts/install.sh",
+    "build": "bash scripts/build-hivecontrol.sh",
+    "start": "echo 'Start your OpenClaw gateway first, then open http://localhost:18789/__hiveclaw__/hivecontrol/'",
+    "sync-upstream": "bash scripts/sync-upstream.sh"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "multi-agent",
+    "swarm",
+    "openclaw",
+    "hivecontrol",
+    "mission-control",
+    "dashboard",
+    "automation",
+    "workflow",
+    "self-hosted",
+    "local-first",
+    "agent-swarm"
+  ],
+  "author": "HivePowered.Ai <hello@hivepowered.ai>",
+  "license": "MIT",
+  "homepage": "https://github.com/inspireyourbrand-dev/hivecontrol-os",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/inspireyourbrand-dev/hivecontrol-os.git"
+  },
+  "bugs": {
+    "url": "https://github.com/inspireyourbrand-dev/hivecontrol-os/issues"
+  },
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "peerDependencies": {
+    "openclaw": ">=0.1.0"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
