@@ -742,9 +742,16 @@
             startTime: Date.now()
         };
 
-        // Access parent window API
-        const hiveWS = window.parent.hiveWS;
-        const hiveStore = window.parent.hiveStore;
+        // Access parent window API (with fallback for standalone mode)
+        let hiveWS = null;
+        let hiveStore = null;
+
+        try {
+            hiveWS = window.parent.hiveWS || null;
+            hiveStore = window.parent.hiveStore || null;
+        } catch (_) {
+            // Cross-origin or no parent — standalone mode
+        }
 
         // Initialize
         function init() {
@@ -755,25 +762,42 @@
 
         // Setup event listeners from gateway
         function setupEventListeners() {
-            if (!hiveWS) {
-                console.warn('HiveWSClient not available in parent');
-                setConnectionStatus(false);
-                return;
+            // Listen for postMessage events from parent (primary communication)
+            window.addEventListener('message', (event) => {
+                try {
+                    if (event.data && event.data.type === 'hiveEvent') {
+                        handleGatewayEvent(event.data.event, event.data.payload);
+                    }
+                } catch (_) { /* ignore malformed messages */ }
+            });
+
+            // Also try direct WS access if parent exposed it
+            if (hiveWS) {
+                try {
+                    hiveWS.on('health', onGatewayHealth);
+                    hiveWS.on('presence', onPresenceUpdate);
+                    hiveWS.on('agent', onAgentEvent);
+                    hiveWS.on('heartbeat', onHeartbeat);
+
+                    // Check connection via the correct property name
+                    const isConn = hiveWS.connected || hiveWS.isConnected || false;
+                    setConnectionStatus(isConn);
+                    return;
+                } catch (err) {
+                    console.warn('[Dashboard] Direct WS access failed, using postMessage:', err.message);
+                }
             }
 
-            // Health events
-            hiveWS.on('health', onGatewayHealth);
-            hiveWS.on('presence', onPresenceUpdate);
-            hiveWS.on('agent', onAgentEvent);
-            hiveWS.on('heartbeat', onHeartbeat);
-            hiveWS.on('disconnect', onDisconnect);
-            hiveWS.on('connect', onConnect);
+            setConnectionStatus(false);
+        }
 
-            // Check initial connection status
-            if (hiveWS.isConnected && typeof hiveWS.isConnected === 'boolean') {
-                setConnectionStatus(hiveWS.isConnected);
-            } else {
-                setConnectionStatus(false);
+        // Route postMessage events to handlers
+        function handleGatewayEvent(event, payload) {
+            switch (event) {
+                case 'health': onGatewayHealth(payload); break;
+                case 'presence': onPresenceUpdate(payload); break;
+                case 'agent': onAgentEvent(payload); break;
+                case 'heartbeat': onHeartbeat(payload); break;
             }
         }
 
