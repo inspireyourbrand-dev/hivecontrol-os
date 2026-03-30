@@ -802,14 +802,54 @@
         }
 
         // WebSocket Management
+        let wsClient = null;
+
         function setupWebSocket() {
-            if (typeof wsClient !== 'undefined') {
-                // Connection status listener
-                if (wsClient.onConnectionChange) {
-                    wsClient.onConnectionChange((connected, reconnecting) => {
+            try {
+                if (typeof HiveWSClient !== 'undefined') {
+                    // Read config from localStorage or use defaults
+                    const savedHost = localStorage.getItem('hivecontrol_ws_host') || '127.0.0.1';
+                    const savedPort = localStorage.getItem('hivecontrol_ws_port') || '18789';
+                    const savedToken = localStorage.getItem('hivecontrol_ws_token') || '';
+
+                    wsClient = new HiveWSClient({
+                        host: savedHost,
+                        port: parseInt(savedPort),
+                        token: savedToken,
+                        autoReconnect: true
+                    });
+
+                    // Expose to child iframes (screens)
+                    window.hiveWS = wsClient;
+                    if (typeof HiveStore !== 'undefined') {
+                        window.hiveStore = new HiveStore();
+                    }
+
+                    // Connection status listener
+                    wsClient.on('connectionChange', (e) => {
+                        const { connected, reconnecting } = e.detail || e;
                         updateConnectionStatus(connected, reconnecting);
                     });
+
+                    // Forward gateway events to screens via postMessage
+                    ['health', 'agent', 'heartbeat', 'presence', 'cron', 'chat'].forEach(evt => {
+                        wsClient.on(evt, (data) => {
+                            try {
+                                screenFrame.contentWindow.postMessage({
+                                    type: 'hiveEvent',
+                                    event: evt,
+                                    payload: data
+                                }, '*');
+                            } catch (_) { /* iframe may not be ready */ }
+                        });
+                    });
+
+                    wsClient.connect();
+                    console.log('[HiveControl] WebSocket client initialized');
                 }
+            } catch (err) {
+                console.warn('[HiveControl] WebSocket setup failed, running in offline mode:', err.message);
+                updateConnectionStatus(false, false);
             }
         }
 
