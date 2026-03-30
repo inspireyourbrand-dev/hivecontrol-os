@@ -37,6 +37,10 @@ credentials.json
 *.key
 token.json
 
+# Upload scripts (contain tokens)
+upload-to-github.ps1
+_upload_data.json
+
 # Stale/duplicate files from workspace
 hive-control-image.jpg
 hive-claw-soft-fork-image.jpg
