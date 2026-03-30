@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# OpenClaw upstream (managed as submodule)
+upstream/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build artifacts
+dist/
+build/
+*.tgz
+
+# Credentials (never commit)
+credentials.json
+*.pem
+*.key
+token.json
+
+# Stale/duplicate files from workspace
+hive-control-image.jpg
+hive-claw-soft-fork-image.jpg
+hiveclaw.config.json
+GITHUB-UPLOAD-GUIDE.md
